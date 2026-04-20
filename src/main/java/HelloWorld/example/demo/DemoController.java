@@ -5,13 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/v1/todo")
+@RequestMapping("todo")
 public class DemoController {
     @Autowired
     private DemoService demoService;
     @GetMapping("/demo")
     String getData() {
-        demoService.printData();
         return "Hello World!";
     }
 
