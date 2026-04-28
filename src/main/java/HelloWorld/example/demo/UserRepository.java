@@ -1,6 +1,5 @@
 package HelloWorld.example.demo;
 
-
 import HelloWorld.example.demo.models.UserModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 

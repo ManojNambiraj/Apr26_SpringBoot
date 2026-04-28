@@ -1,41 +1,55 @@
 package HelloWorld.example.demo;
 
-import org.apache.catalina.User;
+import HelloWorld.example.demo.models.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("todo")
+@RequestMapping("api")
 public class DemoController {
     @Autowired
-    private DemoService demoService;
-    @GetMapping("/demo")
-    String getData() {
-        return "Hello World!";
+    private UserService userService;
+    @GetMapping("/users")
+    ResponseEntity<List<UserModel>> getData() {
+        try{
+            return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+        }catch(RuntimeException e){
+            return new ResponseEntity<>((List<UserModel>) null, HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/{id}")
-    String getDataById(@PathVariable int id){
-        return "Hello World!, It's my ID: " + id;
-    }
-
-    @GetMapping
-    String getDataByParam(@RequestParam("demoId") int id) {
-        return "It's Params ID: " + id;
+    ResponseEntity<UserModel> getDataById(@PathVariable Long id){
+        try{
+            UserModel userById = userService.getUserById(id);
+            return new ResponseEntity<>(userById, HttpStatus.OK);
+        }catch (RuntimeException e){
+            return new ResponseEntity<>((HttpHeaders) null, HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/create")
-    String createUser(@RequestBody String user){
-        return user;
+    ResponseEntity<UserModel> createUser(@RequestBody UserModel User){
+        return new ResponseEntity<>(userService.createUser(User), HttpStatus.CREATED);
     }
 
     @PutMapping("/edit/{id}")
-    String updateUser(@PathVariable int id){
-        return "Updated User: " + id;
+    ResponseEntity<UserModel> updateUser(@PathVariable Long id,  @RequestBody UserModel User){
+        try{
+            UserModel updatedUser = userService.updateUser(id, User);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        }catch(RuntimeException e){
+            return new ResponseEntity<>((HttpHeaders) null, HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/{id}")
-    String deleteUser(@PathVariable int id){
-        return "Deleted User: " + id;
+    void deleteUser(@PathVariable Long id){
+        userService.deleteUser(id);
     }
 }
